@@ -17,8 +17,13 @@ public class TestSelenium {
    }
 
    public static class SetUpUtils {
+      private static final String USER_PATH = System.getProperty("user.dir");
+      private static final String FIREFOX_DRIVER_PATH = USER_PATH + "\\src\\main\\resources\\geckodriver.exe";
+      private static final String DRIVER_EXE = "webdriver.gecko.driver";
+
       WebDriver getDriver() {
-         System.setProperty("webdriver.gecko.driver", "C:\\Users\\Shaidyn\\Desktop\\aa Files to Transfer\\Intellij\\Selenium11Test\\src\\main\\resources\\geckodriver.exe");
+         System.out.println("Launching Firefox");
+         System.setProperty(DRIVER_EXE, FIREFOX_DRIVER_PATH);
 
          return new FirefoxDriver();
       }
@@ -49,6 +54,9 @@ public class TestSelenium {
       private static final String LANGUAGE_DROPDOWN_XPATH = "//span[@class='icp-container-desktop']//div[@class='navFooterLine']//a[@id='icp-touch-link-language']";
       private static final String ENGLISH_LANGUAGE_DROPDOWN_SELECTION_XPATH = LANGUAGE_DROPDOWN_XPATH + "//span[@class='icp-color-base' and text()='English']";
 
+      private static final String TITLE_BAR_USER_HOVER_MENU_XPATH = "//a[@id='nav-link-accountList']//span[@class='nav-line-2 ']";
+      private static final String USER_HOVER_MENU_SIGNOUT_XPATH = "//a[@id='nav-item-signout']//span[@class='nav-text' and text()='Sign Out']";
+
 
       RunTest(WebDriver givenDriver) {
          this.driver = givenDriver;
@@ -64,6 +72,9 @@ public class TestSelenium {
          boolean firstLoginPageFound = true;
 
          driver.navigate().to(TEST_URL);
+
+         //Amazon has two landing page title bars. We need to find out which log in button exists.
+         //This could also be an if statement where I get a WebElements<List> and check its size, but I don't like that implementation.
          try {
             interactionUtils.clickOnElementByXpath(FIRST_LOGIN_BUTTON_XPATH);
          } catch (NoSuchElementException e) {
@@ -72,15 +83,14 @@ public class TestSelenium {
 
          interactionUtils.clickOnElementByXpath(SECOND_LOGIN_BUTTON_XPATH);
 
+         //Enter email address and click Continue
          byte[] decodedBytes = Base64.getDecoder().decode(USERNAME_XPATH);
-
          waitUtils.waitForVisibilityOfLocator(EMAIL_INPUT_BOX_XPATH).sendKeys(new String(decodedBytes));
-
          interactionUtils.clickOnElementByXpath(CONTINUE_BUTTON_XPATH);
 
+         //Enter password and click Sign in.
          decodedBytes = Base64.getDecoder().decode(PWORD_XPATH);
          waitUtils.waitForVisibilityOfLocator(PASSWORD_INPUT_BOX_XPATH).sendKeys(new String(decodedBytes));
-
          interactionUtils.clickOnElementByXpath(SIGN_IN_BUTTON_XPATH);
       }
 
@@ -90,11 +100,11 @@ public class TestSelenium {
          System.out.println("Checking the Landing Page");
 
          //Verify that the "Buy Again" tab exists.
-         Assert.assertTrue(stateUtils.verifyElementIsVisible(BUY_AGAIN_XPATH), "Buy again button is missing");
+         Assert.assertTrue(stateUtils.verifyElementIsVisible(BUY_AGAIN_XPATH), "Buy again button is missing.");
 
          //Verify the language is set to English
          interactionUtils.scrollToLocator(ENGLISH_LANGUAGE_DROPDOWN_SELECTION_XPATH);
-         Assert.assertTrue(stateUtils.verifyElementIsVisible(ENGLISH_LANGUAGE_DROPDOWN_SELECTION_XPATH));
+         Assert.assertTrue(stateUtils.verifyElementIsVisible(ENGLISH_LANGUAGE_DROPDOWN_SELECTION_XPATH), "Language is not set to English.");
 
          cleanUp();
       }
@@ -102,8 +112,8 @@ public class TestSelenium {
       @AfterMethod(alwaysRun = true)
       public void cleanUp() {
          System.out.println("Logging Out");
-         interactionUtils.hoverElementByXpath("//a[@id='nav-link-accountList']//span[@class='nav-line-2 ']");
-         interactionUtils.clickOnElementByXpath("//a[@id='nav-item-signout']//span[@class='nav-text' and text()='Sign Out']");
+         interactionUtils.hoverElementByXpath(TITLE_BAR_USER_HOVER_MENU_XPATH);
+         interactionUtils.clickOnElementByXpath(USER_HOVER_MENU_SIGNOUT_XPATH);
          driver.close();
       }
    }
@@ -140,7 +150,8 @@ public class TestSelenium {
 
       WaitUtils(WebDriver givenDriver) {
          this.driver = givenDriver;
-         //This could be turned into a factory.
+
+         //This could be turned into a factory where we have a variety of wait times depending on the page in question.
          wait = new FluentWait<WebDriver>(driver)
                  .withTimeout(Duration.ofSeconds(10L))
                  .pollingEvery(Duration.ofSeconds(1L))
@@ -168,7 +179,6 @@ public class TestSelenium {
          return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(givenXpath)));
       }
 
-
    }
 
    public static class InteractionUtils {
@@ -183,7 +193,7 @@ public class TestSelenium {
       }
 
       void scrollToLocator(String givenXpath) {
-         //Sometimes when scrolling on an amazon page, a new block of content will appear, so what you just scrolled too
+         //Sometimes when scrolling on an amazon page, a new block of content will appear, so what you just scrolled to
          //disappears off screen. So we try a second time.
          try {
             ((JavascriptExecutor) driver).executeScript(
@@ -206,8 +216,7 @@ public class TestSelenium {
 
       void hoverElementByXpath(String givenXpath) {
          scrollToLocator(givenXpath);
-         actions.moveToElement(driver.findElement(By.xpath(givenXpath))).perform();
-
+         actions.moveToElement(waitUtils.waitForVisibilityOfLocator(givenXpath)).perform();
       }
    }
 }
