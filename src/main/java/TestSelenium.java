@@ -35,8 +35,8 @@ public class TestSelenium {
       private static final String TEST_URL = "http://www.amazon.ca";
       private static final String FIRST_LOGIN_BUTTON_XPATH = "//div[@class='nav-bb-right']/a[text()='Your Account']";
       private static final String SECOND_LOGIN_BUTTON_XPATH = "//span[@id='nav-link-accountList-nav-line-1']";
-      private static final String USERNAME_XPATH = "YWdlbnRhcnJAZ21haWwuY29t";
-      private static final String PWORD_XPATH = "SmVsbHlsb3J1bQ==";
+      private static final String USERNAME_XPATH = "";
+      private static final String PWORD_XPATH = "";
 
       private static final String EMAIL_INPUT_BOX_XPATH = "//input[@id='ap_email']";
       private static final String CONTINUE_BUTTON_XPATH = "//input[@id='continue']";
