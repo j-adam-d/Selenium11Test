@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"<Unnamed>","l":"Amenities"},{"p":"<Unnamed>","l":"InteractionUtils"},{"p":"<Unnamed>","l":"TestSelenium.RunTest"},{"p":"<Unnamed>","l":"TestSelenium.SetUpUtils"},{"p":"<Unnamed>","l":"SideMenu"},{"p":"<Unnamed>","l":"StateUtils"},{"p":"<Unnamed>","l":"TestSelenium"},{"p":"<Unnamed>","l":"WaitUtils"}]
