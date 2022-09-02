@@ -47,7 +47,7 @@ public class TestSelenium {
       private static final String PASSWORD_INPUT_BOX_XPATH = "//input[@id='login_password']";
       private static final String SIGN_IN_BUTTON_XPATH = "//button[@data-testid='submit']";
 
-      private static final int BOOKING_DATE = 9;
+      private static final int BOOKING_DATE = 10;
       private static final String BOOKING_START_HOUR = "6 pm";
       private static final String BOOKING_START_MINUTE = "05";
       private static final String BOOKING_DURATION_HOUR = "1 hr";
